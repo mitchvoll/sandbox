@@ -1,0 +1,1 @@
+Simple roulette bot based on the Robot class in Java. Very much WIP.
