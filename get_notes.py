@@ -6,18 +6,52 @@ from bs4 import BeautifulSoup
 
 # Dictionary of supported courses and their index url
 course = {'cisc235': 'http://sites.cs.queensu.ca/courses/cisc235/', 
-          'cisc223': 'http://research.cs.queensu.ca/home/cisc223/2013w/mon.html'}
+          'cisc223': 'http://research.cs.queensu.ca/home/cisc223/2013w/mon.html',
+          'cisc260': 'http://research.cs.queensu.ca/home/cisc260/2015w/schedule.html'}
+
+# Search through links passed as a parameter and find the token that occurs
+# most frequently. The idea is that this token will be used in the naming
+# scheme for the notes. We throw out tokens that are comman for webpages
+def find_token(all_links):
+  words = {}
+  non_acceptable = [' ', '', 'http', 'http:', 'www.cs.queensu.ca:80']
+  most_frequent = ''
+  most_frequent_count = -1
+
+  for link in all_links:
+    if (link.get('href')):
+      link = link.get('href')4
+      for token in link.split('/'):
+        
+        if (token in words):
+          words[token] += 1
+          if (words[token] > most_frequent_count):
+            most_frequent = token
+            most_frequent_count = words[token]
+
+        elif (token not in non_acceptable):
+          words[token] = 1
+
+  return most_frequent
 
 # Get desired course and destination path from user
 # then pass values to get notes
+def list_courses():
+  lis = []
+  for i in course:
+    lis.append(i)
+  return ", ".join(lis)
+
+
 def get_input():
-  selected_course = raw_input("Enter a course: (cisc235, cisc223): ")
+  selected_course = raw_input("Enter a course: "+list_courses()+": ")
   selected_folder = raw_input("Enter a destination folder (absolute path): ")
   
   if (selected_folder[-1] != '/'):
     selected_folder += '/'
   
-  get_notes(selected_course, selected_folder)
+  # get_notes(selected_course, selected_folder)
+  build_linkword_dict(selected_course)
 
 
 def get_notes(selected_course, selected_folder):
@@ -27,11 +61,10 @@ def get_notes(selected_course, selected_folder):
   soup.prettify()
 
   # Adjust search tokens and proper index pages for each course
+  search_token = find_token(soup.find_all('a'))
   if (selected_course == "cisc235"):
-    search_token = 'Record/'
     course_index_page = course['cisc235']
   elif (selected_course == "cisc223"):
-    search_token = 'moni'
     course_index_page = 'http://research.cs.queensu.ca/home/cisc223/2013w/'
 
   # Loop through all links on index page and 
@@ -56,5 +89,7 @@ def get_notes(selected_course, selected_folder):
         # Download file from server and save to specified location
         print('downloading: \"'+local_file_name+'\" -from- \"'+server_location+'\"')
         urllib.urlretrieve(server_location, local_location)
+
+
 
 get_input()
