@@ -20,7 +20,7 @@ def find_token(all_links):
 
   for link in all_links:
     if (link.get('href')):
-      link = link.get('href')4
+      link = link.get('href')
       for token in link.split('/'):
         
         if (token in words):
@@ -31,18 +31,18 @@ def find_token(all_links):
 
         elif (token not in non_acceptable):
           words[token] = 1
-
+  print ("token used: "+most_frequent)
   return most_frequent
 
-# Get desired course and destination path from user
-# then pass values to get notes
+# List available course in the form [course1, course2, course3]
 def list_courses():
   lis = []
   for i in course:
     lis.append(i)
   return ", ".join(lis)
 
-
+# Get desired course and destination path from user
+# then pass values to get notes
 def get_input():
   selected_course = raw_input("Enter a course: "+list_courses()+": ")
   selected_folder = raw_input("Enter a destination folder (absolute path): ")
@@ -50,9 +50,7 @@ def get_input():
   if (selected_folder[-1] != '/'):
     selected_folder += '/'
   
-  # get_notes(selected_course, selected_folder)
-  build_linkword_dict(selected_course)
-
+  get_notes(selected_course, selected_folder)
 
 def get_notes(selected_course, selected_folder):
   # Get index page for selected course
@@ -63,8 +61,10 @@ def get_notes(selected_course, selected_folder):
   # Adjust search tokens and proper index pages for each course
   search_token = find_token(soup.find_all('a'))
   if (selected_course == "cisc235"):
-    course_index_page = course['cisc235']
+    # The course_index_page is the same as the main course page
+    course_index_page = course['cisc235'] 
   elif (selected_course == "cisc223"):
+    # The course_index_page containing notes is different from the main page
     course_index_page = 'http://research.cs.queensu.ca/home/cisc223/2013w/'
 
   # Loop through all links on index page and 
@@ -89,7 +89,5 @@ def get_notes(selected_course, selected_folder):
         # Download file from server and save to specified location
         print('downloading: \"'+local_file_name+'\" -from- \"'+server_location+'\"')
         urllib.urlretrieve(server_location, local_location)
-
-
 
 get_input()
