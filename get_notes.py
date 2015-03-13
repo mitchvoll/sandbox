@@ -1,13 +1,30 @@
 # Mitch Vollebregt, March 9 2015 
 # Queen's computing note grabber
+from __future__ import print_function
 import urllib
 import urllib2
+import time
+import sys
+
 from bs4 import BeautifulSoup
+
+print("| Running Program...")
 
 # Dictionary of supported courses and their index url
 course = {'cisc235': 'http://sites.cs.queensu.ca/courses/cisc235/', 
           'cisc223': 'http://research.cs.queensu.ca/home/cisc223/2013w/mon.html',
           'cisc260': 'http://research.cs.queensu.ca/home/cisc260/2015w/schedule.html'}
+
+# Creates a download bar for status on notes download
+def download_bar(current, total):
+  print("| Downloading: ", end='')
+  for i in range(0, total):
+    if (i <= current): print("|", end='')
+    else: print("-", end='')
+  total = total -1
+  print(" %"+str(round((float(current)/(total))*100.0, 1)), end='')
+  sys.stdout.write('\r')
+  sys.stdout.flush()
 
 # Search through links passed as a parameter and find the token that occurs
 # most frequently. The idea is that this token will be used in the naming
@@ -41,22 +58,36 @@ def list_courses():
     lis.append(i)
   return ", ".join(lis)
 
+def download_notes(download_links):
+  # Download file from server and save to specified location
+  status = 0
+  for i in download_links:
+    local_location = i
+    server_location = download_links[i]
+    urllib.urlretrieve(server_location, local_location)
+
+    # print('downloading: \"'+local_location+'\" -from- \"'+server_location+'\"')
+    print(server_location)
+    download_bar(status, len(download_links))
+    status += 1
+  
+
 # Get desired course and destination path from user
-# then pass values to get notes
-def get_input():
+# then get note links from webpage
+def get_note_links():
   selected_course = raw_input("Enter a course: "+list_courses()+": ")
   selected_folder = raw_input("Enter a destination folder (absolute path): ")
   
   if (selected_folder[-1] != '/'):
     selected_folder += '/'
   
-  get_notes(selected_course, selected_folder)
 
-def get_notes(selected_course, selected_folder):
   # Get index page for selected course
   page = urllib2.urlopen(course[selected_course]).read()
   soup = BeautifulSoup(page)
   soup.prettify()
+
+  download_links = {}
 
   # Adjust search tokens and proper index pages for each course
   search_token = find_token(soup.find_all('a'))
@@ -86,8 +117,14 @@ def get_notes(selected_course, selected_folder):
         local_location = selected_folder
         local_location += local_file_name
 
-        # Download file from server and save to specified location
-        print('downloading: \"'+local_file_name+'\" -from- \"'+server_location+'\"')
-        urllib.urlretrieve(server_location, local_location)
+        download_links[local_location] = server_location
+  return download_links
 
-get_input()
+def main():
+  links = get_note_links()
+  download_notes(links)
+
+main()
+
+print("\n| Program Finished")
+
