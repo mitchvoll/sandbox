@@ -13,7 +13,8 @@ print("| Running Program...")
 # Dictionary of supported courses and their index url
 course = {'cisc235': 'http://sites.cs.queensu.ca/courses/cisc235/', 
           'cisc223': 'http://research.cs.queensu.ca/home/cisc223/2013w/mon.html',
-          'cisc260': 'http://research.cs.queensu.ca/home/cisc260/2015w/schedule.html'}
+          'cisc260': 'http://research.cs.queensu.ca/home/cisc260/2015w/schedule.html',
+          'cisc223-assignments': 'http://research.cs.queensu.ca/home/cisc223/2013w/asn.html'}
 
 # Creates a download bar for status on notes download
 def download_bar(current, total):
@@ -21,7 +22,7 @@ def download_bar(current, total):
   for i in range(0, total):
     if (i <= current): print("|", end='')
     else: print("-", end='')
-  total = total -1
+  total = total -1l
   print(" %"+str(round((float(current)/(total))*100.0, 1)), end='')
   sys.stdout.write('\r')
   sys.stdout.flush()
@@ -97,7 +98,8 @@ def get_note_links():
   elif (selected_course == "cisc223"):
     # The course_index_page containing notes is different from the main page
     course_index_page = 'http://research.cs.queensu.ca/home/cisc223/2013w/'
-
+  else:
+    course_index_page = course[selected_course]
   # Loop through all links on index page and 
   # link for a search_token to verify link is for a note.
   # 
