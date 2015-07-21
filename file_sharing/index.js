@@ -6,15 +6,17 @@ var io = require('socket.io')(http);
 // file system utilities
 var file = require('fs');
 
+// serve static files
+app.use('/public', express.static('public'));
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/public/index.html');
 });
 
 io.on('connection', function(socket){
-  var uploader = new siofu();
-  uploader.dir = './temp_folders/';
-  uploader.listen(socket);
+	var uploader = new siofu();
+	uploader.dir = './temp_folders/';
+	uploader.listen(socket);
 });
 
 // io.on('connection', function(socket){
@@ -27,5 +29,5 @@ io.on('connection', function(socket){
 // });
 
 http.listen(3000, function(){
-  console.log('listening on port:3000');
+	console.log('listening on port:3000');
 });

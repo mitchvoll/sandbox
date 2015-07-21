@@ -1,0 +1,53 @@
+body{
+	background-color: #1de9b6 !important;
+}
+.background{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border: 20px dashed white;
+	margin: 40px;
+}
+.background-ondrag{
+	border: 20px dashed #d71c4b !important;
+}
+.main-panel{
+	background-color: #d71c4b;
+}
+.main-text{
+	color: #ffffff;
+	/*color: #d71c4b;*/
+}
+.filename{
+	display: inline;
+	text-align: center;
+}
+.file-preview{
+	background-color: #d71c4b;
+	border: none;
+	box-shadow: none;
+}
+.file-preview li div{
+	border: none;
+}
+.file-preview-display{
+	color: #ffffff;
+	text-align: center;
+}
+.file-preview-display i{
+	color: #ffffff;
+	font-size: 105px;
+}
+#filename{
+	margin: 0;
+}
+#siofu_input{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}

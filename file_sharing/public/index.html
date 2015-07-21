@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Socket.IO file uploader</title>
+
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="public/js/materialize.js"></script>
+	<script src="public/js/client.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="public/css/materialize.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="public/css/custom.css">
+</head>
+
+<body>
+	<div id="dropbox" dropzone="copy" class="valign-wrapper background teal accent-3">
+		<div class="container">
+
+			<div class="row valign">
+				<div class="col s6 offset-s3">
+
+					<div class="card-panel main-panel z-depth-3">
+						<h1 class="center-align main-text">DRAG ZIP FILE TO UPLOAD</h1>
+						<ul class="collapsible file-preview" data-collapsible="accordion">
+							<li>
+								<div class="collapsible-header file-preview-activate" style="display: none;"></div>
+								<div class="collapsible-body file-preview-display">
+									<i class="material-icons">perm_media</i><h3 id="filename"></h3>
+									<div class="progress">
+										<div id="progress-bar" class="determinate" style="width: 0%"></div>
+									</div>
+								</div>
+
+							</li>
+
+						</ul>
+
+						<form action="">
+							<label for="siofu_input" style="display: none;"></label>
+							<!-- <input type="file" id="siofu_input" onClick="return false"/> -->
+
+							<button id="cancel-button" class="btn waves-effect waves-light grey" type="cancel" name="action" >Cancel
+							</button>
+							<button id="upload-button" class="btn waves-effect waves-light right" type="submit" name="action">Confirm
+							</button>
+						</form>
+
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	
+	
+
+	<script>
+		var socket = io();
+		var uploader = new SocketIOFileUpload(socket);
+		// uploader.listenOnDrop(document.getElementById("file-drop"));
+
+		// upload percentage
+		uploader.addEventListener("progress", function(event){
+			var percent = Math.round(event.bytesLoaded / event.file.size * 100);
+			// keep track of each percent update so not to update the progress bar
+			// more than once for the same percentage
+			var last = 0.0;
+			if (percent > last + 1){
+				console.log("File is", percent.toFixed(2), "percent loaded");
+				$('#progress-bar').attr('style', "width: " + percent + "%;");
+				last = percent;	
+			}
+			
+		});
+
+		// upload complete
+		uploader.addEventListener("complete", function(event){
+			$('#filename').text('UPLOAD COMPLETE!');
+    	});
+
+    	// dropzone and pass filelist to uploader
+    	var dropbox = document.getElementById("dropbox");
+    	var files;
+    	dropbox.addEventListener("dragenter", dragenter, false);
+    	dropbox.addEventListener("dragover", dragover, false);
+    	dropbox.addEventListener("drop", drop, false);
+
+    	function dragenter(e) {
+    		e.stopPropagation();
+    		e.preventDefault();
+    	}
+
+    	function dragover(e) {
+    		$('.background').addClass('background-ondrag');
+    		e.stopPropagation();
+    		e.preventDefault();
+    	}
+
+    	function drop(e) {
+    		$('.background').removeClass('background-ondrag')
+    		e.stopPropagation();
+    		e.preventDefault();
+
+    		var dt = e.dataTransfer;
+    		files = dt.files;
+    		$('#filename').text(files[0].name);
+    		if ($('.file-preview > li').attr('class') != "active"){
+    			$('.file-preview-activate').click();
+    		}
+    	}
+
+    	// cancel button
+    	$('#cancel-button').on('click', function(){
+    		files = null;
+    		if ($('.file-preview > li').attr('class') == "active"){
+    			$('.file-preview-activate').click();
+    		}
+    		return false;
+    	});
+
+    	// upload button
+    	$('#upload-button').on('click', function(){
+    		uploader.submitFiles(files);
+    	});
+
+		// page js styles
+	</script>
+</body>
+</html>
