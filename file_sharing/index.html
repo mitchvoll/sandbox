@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO file uploader</title>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/siofu/client.js"></script>
+  </head>
+  <body>
+    <label for="siofu_input"></label>
+    <input type="file" id="siofu_input" />
+
+    <script>
+      var socket = io();
+
+      // var name = '';
+      // $('#chat').submit(function(){
+      //   socket.emit('chat message', {msg: $('#m').val(), user: name});
+      //   $('#m').val('');
+      //   return false;
+      // });
+
+      // $('#name_input').submit(function(){
+      //   var newName = $('#n').val();
+      //   socket.emit('name submit', newName);
+      //   name = newName;
+      //   $('#name_input').hide();
+      //   return false;
+      // });
+
+      // socket.on('new name', function(name){
+      //   $('#messages').append($('<li>').text(name + ' has joined the chat'));
+      // });
+
+      // socket.on('chat message', function(data){
+      //   $('#messages').append($('<li>').text(data.user + ': ' + data.msg));
+
+      // });
+    </script>
+  </body>
+</html>
