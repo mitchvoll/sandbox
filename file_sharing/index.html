@@ -9,33 +9,12 @@
   <body>
     <label for="siofu_input"></label>
     <input type="file" id="siofu_input" />
+    
 
     <script>
       var socket = io();
-
-      // var name = '';
-      // $('#chat').submit(function(){
-      //   socket.emit('chat message', {msg: $('#m').val(), user: name});
-      //   $('#m').val('');
-      //   return false;
-      // });
-
-      // $('#name_input').submit(function(){
-      //   var newName = $('#n').val();
-      //   socket.emit('name submit', newName);
-      //   name = newName;
-      //   $('#name_input').hide();
-      //   return false;
-      // });
-
-      // socket.on('new name', function(name){
-      //   $('#messages').append($('<li>').text(name + ' has joined the chat'));
-      // });
-
-      // socket.on('chat message', function(data){
-      //   $('#messages').append($('<li>').text(data.user + ': ' + data.msg));
-
-      // });
+      var uploader = new SocketIOFileUpload(socket);
+      uploader.listenOnInput(document.getElementById("siofu_input"));
     </script>
   </body>
 </html>

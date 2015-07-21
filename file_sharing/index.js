@@ -1,9 +1,11 @@
 var siofu = require('socketio-file-upload');
-var app = require('express').use(siofu.router);
+var express = require('express');
+var app = express().use(siofu.router);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 // file system utilities
 var file = require('fs');
+
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -11,7 +13,7 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
   var uploader = new siofu();
-  uploader.dir = 'temp/';
+  uploader.dir = './temp_folders/';
   uploader.listen(socket);
 });
 
