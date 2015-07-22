@@ -6,6 +6,9 @@ var io = require('socket.io')(http);
 // file system utilities
 var file = require('fs');
 
+// use port 3001
+app.set('port', process.env.PORT || 3001);
+
 // serve static files
 app.use('/public', express.static('public'));
 
