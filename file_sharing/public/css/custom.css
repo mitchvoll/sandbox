@@ -40,6 +40,10 @@ body{
 	color: #ffffff;
 	font-size: 105px;
 }
+#status{
+	padding: 0 !important;
+	line-height: 0 !important;
+}
 #filename{
 	margin: 0;
 }

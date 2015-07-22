@@ -31,22 +31,29 @@
 									<div class="progress">
 										<div id="progress-bar" class="determinate" style="width: 0%"></div>
 									</div>
+									<div class="row">
+										<div class="col s4">
+											<button id="cancel-button" class="btn waves-effect waves-light grey" type="cancel" name="action" >Cancel
+										</button>
+										</div>
+										<div class="col s4">
+											&nbsp;
+											<p id="status">READY</p>
+										</div>
+										<div class="col s4">
+											<button id="upload-button" class="btn waves-effect waves-light" type="submit" name="action">Confirm
+										</button>
+										</div>
+									</div>
+									
+									
+									
 								</div>
 
 							</li>
 
 						</ul>
-
-						<form action="">
-							<label for="siofu_input" style="display: none;"></label>
-							<!-- <input type="file" id="siofu_input" onClick="return false"/> -->
-
-							<button id="cancel-button" class="btn waves-effect waves-light grey" type="cancel" name="action" >Cancel
-							</button>
-							<button id="upload-button" class="btn waves-effect waves-light right" type="submit" name="action">Confirm
-							</button>
-						</form>
-
+						
 					</div>
 
 				</div>
@@ -69,19 +76,16 @@
 			var percent = Math.round(event.bytesLoaded / event.file.size * 100);
 			// keep track of each percent update so not to update the progress bar
 			// more than once for the same percentage
-			var last = 0.0;
-			if (percent > last + 1){
-				console.log("File is", percent.toFixed(2), "percent loaded");
-				$('#progress-bar').attr('style', "width: " + percent + "%;");
-				last = percent;	
-			}
-			
+			console.log("File is", percent.toFixed(2), "percent loaded");
+			$('#progress-bar').attr('style', "width: " + percent + "%;");
+			$('#status').text("UPLOADING - %" + (percent - 1));
 		});
 
 		// upload complete
 		uploader.addEventListener("complete", function(event){
 			$('#filename').text('UPLOAD COMPLETE!');
-    	});
+			$('#status').text("UPLOADED - %100");
+		});
 
     	// dropzone and pass filelist to uploader
     	var dropbox = document.getElementById("dropbox");
@@ -105,10 +109,12 @@
     		$('.background').removeClass('background-ondrag')
     		e.stopPropagation();
     		e.preventDefault();
-
+    		// get files from drop
     		var dt = e.dataTransfer;
     		files = dt.files;
-    		$('#filename').text(files[0].name);
+    		// calculate chunch size (file_size / 100 chunks = chunk_size)
+    		uploader.chunkSize = (files[0].size/100);
+    		$('#filename').text(files[0].name + " - " + human_file_size(files[0].size, true));
     		if ($('.file-preview > li').attr('class') != "active"){
     			$('.file-preview-activate').click();
     		}
@@ -127,8 +133,24 @@
     	$('#upload-button').on('click', function(){
     		uploader.submitFiles(files);
     	});
-
 		// page js styles
+			
+		// helper functions
+		function human_file_size(bytes, si) {
+			var thresh = si ? 1000 : 1024;
+			if(Math.abs(bytes) < thresh) {
+				return bytes + ' B';
+			}
+			var units = si
+			? ['kB','MB','GB','TB','PB','EB','ZB','YB']
+			: ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+			var u = -1;
+			do {
+				bytes /= thresh;
+				++u;
+			} while(Math.abs(bytes) >= thresh && u < units.length - 1);
+			return bytes.toFixed(1)+' '+units[u];
+		}
 	</script>
 </body>
 </html>
