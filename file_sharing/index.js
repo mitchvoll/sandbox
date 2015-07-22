@@ -6,9 +6,6 @@ var io = require('socket.io')(http);
 // file system utilities
 var file = require('fs');
 
-// use port 3001
-app.set('port', process.env.PORT || 3001);
-
 // serve static files
 app.use('/public', express.static('public'));
 
@@ -31,6 +28,6 @@ io.on('connection', function(socket){
 //   });
 // });
 
-http.listen(3000, function(){
-	console.log('listening on port:3000');
+http.listen(8081, function(){
+	console.log('listening on port:8081');
 });
