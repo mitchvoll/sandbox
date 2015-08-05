@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>threejs test</title>
+
+	<link rel="stylesheet" type="text/css" href="public/css/custom.css">
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="public/js/three.min.js"></script>
+	<script src="public/js/OrbitControls.js"></script>
+</head>
+
+<body>
+	<script>
+	// socket io initialization to auto-discovery
+	var socket = io();
+	var stock_data;
+
+	// Set up the scene, camera, and renderer as global variables.
+	var scene, camera, renderer;
+
+	init();
+	animate();
+
+	// Sets up the scene.
+	function init() {
+		// Create the scene and set the scene size.
+		scene = new THREE.Scene();
+		var WIDTH = window.innerWidth,
+		HEIGHT = window.innerHeight;
+
+		// Create a renderer and add it to the DOM.
+		renderer = new THREE.WebGLRenderer({antialias:true});
+		renderer.setSize(WIDTH, HEIGHT);
+		document.body.appendChild(renderer.domElement);
+
+		// Create a camera, zoom it out from the model a bit, and add it to the scene.
+		camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
+		camera.position.set(124,257,2939);
+		scene.add(camera);
+
+		// Create an event listener that resizes the renderer with the browser window.
+		window.addEventListener('resize', function() {
+			var WIDTH = window.innerWidth,
+			HEIGHT = window.innerHeight;
+			renderer.setSize(WIDTH, HEIGHT);
+			camera.aspect = WIDTH / HEIGHT;
+			camera.updateProjectionMatrix();
+		});
+
+		// Set the background color of the scene.
+		renderer.setClearColor(0x333F47, 1);
+
+		// Create a light, set its position, and add it to the scene.
+		var light = new THREE.PointLight(0xffffff);
+		light.position.set(-100,200,100);
+		scene.add(light);
+
+		// Load in the mesh and add it to the scene.
+		// var loader = new THREE.JSONLoader();
+		// loader.load( "public/js/treehouse_logo.js", function(geometry){
+		// 	var material = new THREE.MeshLambertMaterial({color: 0x55B663});
+		// 	mesh = new THREE.Mesh(geometry, material);
+		// 	scene.add(mesh);
+		// });
+
+
+		function create_line(data, z){
+    		// define line material and geometry
+    		var line_mat = new THREE.LineBasicMaterial({ color: 0xffffff });
+    		var line_geo = new THREE.Geometry();
+
+    		for (var i = 0; i < data.length; i++){
+    			line_geo.vertices.push(new THREE.Vector3(i, data[i][1], z));
+    		}
+
+    		// create line and add to scene
+    		var line = new THREE.Line(line_geo, line_mat);
+    		scene.add(line);
+    		return line;
+    	}
+
+    	function normalize(data){
+    		var min_val = data[0][1];
+    		normalized_data = data;
+    		for (var i = 0; i < data.length; i++){
+    			if (data[i][1] < min_val){
+    				min_val = data[i][1];
+    			}
+    		}
+    		for (var i = 0; i < data.length; i++){
+    			normalized_data[i][1] = data[i][1] - min_val;
+    		}
+    		return normalized_data
+    	}
+
+    	// get parsed stock data from server
+    	var num_lines = 0;
+    	socket.on('stock_data', function (data){
+    		stock_data = normalize(data.slice(1));
+    		// console.log(stock_data);
+    		create_line(stock_data, num_lines);
+    		num_lines = num_lines + 5;
+    	});
+
+    	socket.on('stock_symbols', function (data){
+    		// request and plot all stocks
+    		for (var i = 0; i < data.length; i++){
+    			socket.emit('stock_request', data[i]);
+    		}
+    	});
+
+    	// create_line([[0,10],[10,10],[100,10]], 0);
+
+    	
+
+		// Add OrbitControls so that we can pan around with the mouse.
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
+	}
+
+	// Renders the scene and updates the render as needed.
+	function animate() {
+		requestAnimationFrame(animate);
+
+		// camera.position
+
+	    // Render the scene.
+	    renderer.render(scene, camera);
+	    controls.update();
+
+	}
+
+</script>
+</body>
+</html>
