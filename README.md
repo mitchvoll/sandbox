@@ -17,7 +17,9 @@ Small experimental programs quickly hacked together. I wanted to have these proj
   - Despite these flaws the bot has performed very successfully testing with free accounts and fake money. I'm not so sure I'd want to try this with real money though.
 
 ## three_js project
- - Experimenting with three_js. This project produces a 3d representation of the S&P500 for the last year.
+ - Experimenting with three_js. This app produces a 3d representation of the S&P500 for the last year.
+ 
+![alt text](https://github.com/mitchvoll/sandbox/blob/master/threejs/stocks.png "Example")
 
 ## get_notes.py
  - Small python script to save class notes from a number of Queen's Computing course websites.
